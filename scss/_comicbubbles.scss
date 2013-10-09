@@ -1,0 +1,107 @@
+// Inspired by CSS found at
+// http://www.sitepoint.com/pure-css3-speech-bubbles/
+
+// configurable variables
+$bubble-border-color: #666 !default;
+$bubble-border-radius: 30 !default;
+$bubble-border-thickness: 8 !default;
+
+$bubble-background-color: #fff !default;
+$bubble-base-zindex: 2000 !default;
+$bubble-base-font-size: 16px !default;
+
+$bubble-padding-vertical: 20 !default;
+$bubble-padding-horizontal: 4 !default;
+
+// $bubble-shadow-offset: 2 !default;
+// $bubble-shadow-blur: 4 !default;
+// $bubble-shadow-color: #888 !default;
+
+$bubble-height: 400 !default;
+$bubble-lead-side: bottom !default;
+
+$bubble-overflow: auto !default;
+$bubble-content-padding: 8 !default;
+
+$pip-scalar: 4 !default;
+$pip-offset: 40 !default;
+
+$sqrt2: 1.4142135623730950488016887242096980785696718753769;
+
+
+// makes a speech bubble
+// $side is the side you want the directional triangle on
+@mixin speech-bubble( $side:$bubble-lead-side, $height:$bubble-height, $border-width:$bubble-border-thickness ) {
+	position: relative;
+	height: pem($height + ($bubble-padding-vertical * 2));
+
+	background-color: $bubble-background-color;
+	padding: pem($bubble-padding-vertical) pem($bubble-padding-horizontal);
+
+	border: pem($border-width) solid $bubble-border-color;
+	border-radius: pem($bubble-border-radius);
+	// @include box-shadow($bubble-shadow-color, pem($bubble-shadow-offset), pem($bubble-shadow-offset), pem($bubble-shadow-blur));
+
+	p {
+		height: pem($height);
+		overflow: $bubble-overflow;
+		padding: pem($bubble-content-padding);
+	}
+
+	// before and after are for the triangle
+	&:before,
+	&:after {
+		content: ' ';
+		position: absolute;
+		width: 0;
+		height: 0;
+	}
+	&:before {
+		border: pem($border-width * $pip-scalar) solid;
+		z-index: $bubble-base-zindex + 1;
+		@if $side == right {
+			@include make-bubble-pip($right:pem($border-width * ($pip-scalar * -2)), $bottom:pem($pip-offset), $bcb:$bubble-border-color, $bcl:$bubble-border-color);
+		} @else if $side == left {
+			@include make-bubble-pip($right:pem($border-width * ($pip-scalar * -2)), $bottom:pem($pip-offset), $bcb:$bubble-border-color, $bcl:$bubble-border-color);
+		} @else if $side == top {
+			@include make-bubble-pip($right:pem($border-width * ($pip-scalar * -2)), $bottom:pem($pip-offset), $bcb:$bubble-border-color, $bcl:$bubble-border-color);
+		} @else {
+			@include make-bubble-pip($bottom:pem($border-width * ($pip-scalar * -2)), $right:pem($pip-offset), $bct:$bubble-border-color, $bcr:$bubble-border-color);
+		}
+	}
+	&:after {
+		border: pem($border-width * ((2 * $pip-scalar) - 1 - $sqrt2) /2 ) solid;
+		z-index: $bubble-base-zindex + 2;
+		@if $side == right {
+			@include make-bubble-pip($right:pem(1 + ceil( $border-width * -1 * ((2 * $pip-scalar) - 1 - $sqrt2))), $bottom:pem($border-width + $pip-offset), $bcb:$bubble-background-color, $bcl:$bubble-background-color);
+		} @else if $side == left {
+			@include make-bubble-pip($right:pem(1 + ceil( $border-width * -1 * ((2 * $pip-scalar) - 1 - $sqrt2))), $bottom:pem($border-width + $pip-offset), $bcb:$bubble-background-color, $bcl:$bubble-background-color);
+		} @else if $side == top {
+			@include make-bubble-pip($right:pem(1 + ceil( $border-width * -1 * ((2 * $pip-scalar) - 1 - $sqrt2))), $bottom:pem($border-width + $pip-offset), $bcb:$bubble-background-color, $bcl:$bubble-background-color);
+		} @else {
+			@include make-bubble-pip($bottom:pem(1 + ceil( $border-width * -1 * ((2 * $pip-scalar) - 1 - $sqrt2))), $right:pem($border-width + $pip-offset), $bct:$bubble-background-color, $bcr:$bubble-background-color);
+		}
+	}
+
+}
+
+
+@mixin make-bubble-pip ($top:auto, $right:auto, $bottom:auto, $left:auto, $bct:transparent, $bcr:transparent, $bcb:transparent, $bcl:transparent) {
+	top: $top;
+	right: $right;
+	bottom: $bottom;
+	left: $left;
+	border-color: $bct $bcr $bcb $bcl;
+}
+
+
+// function pem from http://goo.gl/NJNozD
+@function pem($pxval, $base: $bubble-base-font-size) {
+	@if (unitless($pxval)) {
+		$pxval: $pxval * 1px;
+	}
+	@if (unitless($base)) {
+		$base: $base * 1px;
+	}
+	@return $pxval / $base * 1em;
+}

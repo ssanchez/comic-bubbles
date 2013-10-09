@@ -1,4 +1,4 @@
 comic-bubbles
 =============
 
-SCSS for comics-style speech bubbles and thought balloons
+SASS for comics-style speech bubbles and thought balloons.

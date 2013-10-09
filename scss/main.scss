@@ -1,0 +1,11 @@
+// Make sure the charset is set appropriately
+@charset "UTF-8";
+
+@import "comicbubbles";
+
+// example of setting vars
+$bubble-height: 300;
+
+.speech {
+	@include speech-bubble;
+}
